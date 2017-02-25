@@ -1,0 +1,166 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+.wrap{
+    background-color: silver;
+    padding: 0;
+    margin: 0;
+}
+.banner{
+  height: 100px ;
+    background-color: rgba(0,0,0,0.8);
+  position: relative;
+    }
+.banner h1{
+    position: absolute;
+    left:20px;
+    bottom:12px ;
+}
+.banner ul{
+    position: absolute;
+    right:5px;
+    bottom:12px ;
+}
+.banner ul li{
+   float: left;
+    margin-left:20px ;
+}
+.banner ul li a{
+    font-size: 20px;
+    color: rgb(255,255,255);
+    text-decoration: none;
+}
+.banner ul li a:active{
+    color: darkgrey;
+}
+.content{
+    background-color:rgba(255,255,255,1);
+    margin-top:10px ;
+    padding-top:20px ;
+    padding-bottom: 15px;
+    width: 100%;
+}
+.body{
+    margin-left: 15px;
+}
+.body h3 , h4{
+    color:#999;
+}
+.duanluo{
+    text-indent:2em ;
+
+}
+.duanluo p{
+    font-size: 18px;
+}
+.imgList ul li{
+    border: 1px #ccc solid;
+    width: 150px;
+    height: 170px;
+    margin-bottom:20px ;
+}
+.imgList ul li p{
+    text-align: center;
+}
+.imgList ul li img{
+    width: 100px;
+    height: 100px;
+    margin-left:16%;
+}
+.table{
+    width: 100%;
+    border-collapse: collapse;
+
+}
+.table th{
+    border: 1px solid #eee;
+    padding:4px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 18px;
+   }
+.table td{
+    border: 1px solid #eee;
+    padding:4px;
+}
+.table tr:nth-last-child(1){
+    background-color: #ccc;
+}
+.bottom{
+    margin-left:20px ;
+}
+.bottom h2{
+    padding-left: 5px;
+    border-left:5px solid #ccc;
+}
+.bottom .form{
+    width: 70%;
+    }
+.inoutF{
+    margin-bottom: 15px;
+    position: relative;
+    width: 100%;
+}
+.inputN{
+    position: relative;
+    display:inline-block;
+    width: 100%;
+
+}
+.inputN:after{
+    content:".";
+    display:block;height:0;clear:both;visibility:hidden
+}
+.inputN span{
+   float: right;
+    margin-right: 20px;
+}
+.inputN input{
+   float: right;
+    margin-right:100px;
+   }
+.inoutF p{
+    margin-top:8px;
+    margin-bottom: 10px;
+    margin-left: 50%;
+    color:#999;
+}
+.raido{
+       display:inline-block;
+    width: 100%;
+}
+.raido:after{
+    content:".";
+    display:block;height:0;clear:both;visibility:hidden
+}
+.raido .input{
+    float: right;
+    margin-right:200px;
+}
+.raido span{
+    float: right;
+    margin-right: 10px;
+}
+.raido .input_s{
+    float: right;
+    margin-right:100px;
+}
+.button{
+    width: 100%;
+    border-radius: 10px;
+    background-color: blue;
+    color: #fff;
+    font-size: 14px;
+    margin-left:100px ;
+    }
+.content_foot{
+    margin-top: 20px;
+    background-color:rgba(0,0,0,0.7);
+    height: 50px;
+    position: relative;
+}
+.content_foot .copy{
+      color:white;
+    text-align: center;
+}
