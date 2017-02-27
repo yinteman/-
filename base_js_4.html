@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础JavaScript练习（一）&& 基础JavaScript练习（二） </title>
+</head>
+<style>
+    #render{
+        display: block;
+
+    }
+    #render:after{
+        content: '';
+        display: block;
+        clear: both;
+        width: 0;
+        heigh:0;
+        visibility: hidden;
+    }
+</style>
+<body>
+   <div id="squence">
+       <input id="nums">
+       <button id="leftIn" >左侧入</button>
+       <button id="rightIn" >右侧入</button>
+       <button id="leftOut" >左侧出</button>
+       <button id="rightOut" >右侧出</button>
+   </div>
+   <div style="width: 100%" >
+       <ul style="list-style: none" id="render">
+
+       </ul>
+   </div>
+  <div id="task2" style="transform: rotate(180deg)">
+
+  </div>
+
+</body>
+<script>
+    function getDateAndDirection(e){
+        var data =document.getElementById('nums').value ?document.getElementById('nums').value:'out' ;
+        var direction ;
+        switch(e.target.id){
+            case "leftIn" :
+                direction =  0;break;
+            case "rightIn":
+                direction = 1 ; break;
+            case 'leftOut':
+                direction=-1;break;
+            case 'rightOut' :
+                direction = -2 ;break;
+        }
+        return [data,direction]
+    }
+
+    //任务一：
+    function draw1(arr){
+        var render = document.getElementById('render');
+        var li = document.createElement('li');
+        li.style.border ='1px solid white';
+        li.style.backgroundColor ='red';
+        li.style.color ='white';
+        li.style.display ='block';
+        li.style.width ='50px';
+        li.style.height ='50px';
+        li.style.float ='left';
+        switch (arr[1]){
+            case 0 :
+                li.innerText = arr[0];
+                render.insertBefore(li,render.firstChild);break;
+            case 1:
+                li.innerText = arr[0];
+                render.appendChild(li);break;
+            case -1:
+                render.removeChild(render.firstChild);break;
+            case -2:
+                render.removeChild(render.lastChild);break;
+        }
+    }
+    //任务2
+    function  draw2(arr){
+        console.log(arr);
+        var view = document.getElementById('task2');
+        var div = document.createElement('div');
+        div.style.border ='1px solid white';
+        div.style.backgroundColor ='red';
+        div.style.display ='block';
+        div.style.width ='10px';
+        div.style.height = arr[0] +'px';
+        div.style.float ='left';
+        switch (arr[1]){
+            case 1 :
+                view.insertBefore(div,view.firstChild);break;
+            case 0:
+                view.appendChild(div);break;
+            case -2:
+                view.removeChild(view.firstChild);break;
+            case -1:
+                view.removeChild(view.lastChild);break;
+        }
+        document.getElementById('nums').value ='';
+    }
+    function init(e){
+        if(document.getElementById('render').childNodes.length > 60 ){
+            alert('overMaxin')
+        }else{
+            var arr = getDateAndDirection(e);
+            if(arr[0] == 'out' && arr[1] > -1){
+                alert('eoor')
+            }else{
+                draw1(arr);//任务1
+                draw2(arr);//任务2
+            }
+        }
+//快速排序算法
+        function quickSort(arr) {
+            //如果数组<=1,则直接返回
+            if (arr.length <= 1) {
+                return arr;
+            }
+            var pivotIndex = Math.floor(arr.length / 2);
+            //找基准，并把基准从原数组删除
+            var pivot = arr.splice(pivotIndex, 1)[0];
+            //定义左右数组
+            var left = [];
+            var right = [];
+
+            //比基准小的放在left，比基准大的放在right
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] <= pivot) {
+                    left.push(arr[i]);
+                }
+                else {
+                    right.push(arr[i]);
+                }
+            }
+            //递归
+            return quickSort(left).concat([pivot], quickSort(right));
+        }
+    window.onload= function(){
+        var btns = document.getElementsByTagName('button');
+        var flage = false;
+        document.getElementById('nums').addEventListener('blur',function(e){
+            if( (parseInt(e.target.value )< 10 || parseInt(e.target.value ) > 100) && flage ){
+                 console.log('wrong');
+            }
+            flage = false;
+        });
+        document.getElementById('nums').addEventListener('focus',function(e){
+            flage = true
+        });
+        for(var i=0;i<btns.length ;i++){
+            btns[i].addEventListener('click',init);
+        }
+    }
+</script>
+</html>
