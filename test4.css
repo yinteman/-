@@ -108,39 +108,35 @@ body{
     width: 100%;
 
 }
-.inputN:after{
-    content:".";
-    display:block;height:0;clear:both;visibility:hidden
-}
+
 .inputN span{
-   float: right;
-    margin-right: 20px;
+    /*float: right;*/
+
+    display: inline-block;
+    width: 40%;
+    text-align: center;
 }
 .inputN input{
-   float: right;
-    margin-right:100px;
+    /*float: right;
+    margin-right:100px;*/
    }
 .inoutF p{
     margin-top:8px;
     margin-bottom: 10px;
-    margin-left: 50%;
+    margin-left: 43%;
     color:#999;
 }
 .raido{
        display:inline-block;
     width: 100%;
 }
-.raido:after{
-    content:".";
-    display:block;height:0;clear:both;visibility:hidden
-}
-.raido .input{
-    float: right;
-    margin-right:200px;
-}
+
+
 .raido span{
-    float: right;
-    margin-right: 10px;
+    margin-right: 20px;
+    display: inline-block;
+    width: 40%;
+    text-align: center;
 }
 .raido .input_s{
     float: right;
