@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表单（三）联动</title>
+    <style>
+       #tab{
+            display: block;
+            position: relative;
+            width: 100%;
+            margin-left: 50px;
+        }
+       #tab li{
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+  <div class="wrapp">
+      <label><input type="radio" name="comeform" value="0" checked>在校生</label>
+      <label><input type="radio" name="comeform" value="1">非在校生</label>
+
+          <ul id="tab">
+              <li style="display: block">
+
+                      <span>学校</span>
+                      <select  name="lcoation" id="location">
+                          <option value="beijing">beijing</option>
+                          <option value="shanghai">shanghai</option>
+                      </select >
+                      <select  name="school" id="school">
+                      </select >
+
+
+              </li>
+              <li style="display: none">
+
+                      <span>就业单位</span>
+                      <input type="text">
+
+              </li>
+          </ul>
+
+  </div>
+  <script>
+      function removeAllChild(el){
+          //想要正常的删除全部索引必须从后向前删除
+          var childs = el.childNodes;
+          for(var i = childs.length -1;i > 0;i-- ){
+              el.removeChild(childs[i]);
+          }
+      }
+      window.onload = function(){
+          var data={
+              'beijing':['a','b'],
+              'shanghai':['c','d']
+          }
+          var radio =document.getElementsByName('comeform');
+          var len = radio.length;
+          var tab = document.getElementById('tab')
+          var liList = Array.prototype.slice.call(tab.childNodes,0).filter(function(item){return item.nodeType != 3})
+          for(var i = 0;i<len;i++){
+              radio[i].addEventListener('change',function(e){
+                  switch(e.target.value){
+                      case '0':
+                          liList[0].style.display = 'block';
+                          liList[1].style.display = 'none';break;
+                      case '1':
+                          liList[1].style.display = 'block';
+                          liList[0].style.display = 'none';break;
+
+                  }
+              })
+          }
+          document.getElementById('location').addEventListener('change',function(e){
+              removeAllChild( document.getElementById('school'));
+              var location = e.target.value;
+              var schools = data[location];
+               schools.forEach(function(item,index){
+                  var opt = document.createElement('option');
+                  opt.value = item;
+                   opt.innerText = item ;
+                  document.getElementById('school').appendChild(opt)
+              });
+          })
+      }
+  </script>
+</body>
+</html>
