@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础JavaScript练习(三）</title>
+    <style>
+        #render:after{
+            clear: both;
+            content: '';
+            height: 0;
+            display: table;
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+<div id="wrap">
+<div id="squence">
+    <textarea id="datas"></textarea>
+    <button id="leftIn" >左侧入</button>
+    <button id="rightIn" >右侧入</button>
+    <button id="leftOut" >左侧出</button>
+    <button id="rightOut" >右侧出</button>
+</div>
+<div style="width: 100% ;display: block" >
+    <ul style="list-style: none" id="render">
+    </ul>
+</div>
+</div>
+<div class="search" >
+    <input type="text" id="search">
+    <button id="btnSearch">查询</button>
+</div>
+<script>
+    function getData(){
+    var value =  document.getElementById('datas').value;
+        var data = value.toString().replace(/[^\d\w\\u4e00-\u9fa5]/g,' ');
+       var  datas = data.split(' ').map(function(item){
+            return item.trim();
+        }).filter(function(item){return item != ''});
+        return datas;
+
+    }
+    function pushIn(parent,datas,flag){
+
+      datas.forEach(function(item){
+          var li = document.createElement('li');
+          li.style.border ='1px solid white';
+          li.style.backgroundColor ='red';
+          li.style.color ='white';
+          li.style.display ='block';
+          li.style.width ='50px';
+          li.style.height ='50px';
+          li.style.float ='left';
+          li.innerHTML = item;
+          if(flag){
+              parent.appendChild(li)
+          }else{
+              parent.insertBefore(li,parent.firstChild)
+          }
+      })
+    }
+    function getDateAndDirection(e){
+      var datas = getData();
+        var direction ;
+        switch(e.target.id){
+            case "leftIn" :
+                direction =  0;break;
+            case "rightIn":
+                direction = 1 ; break;
+            case 'leftOut':
+                direction=-1;break;
+            case 'rightOut' :
+                direction = -2 ;break;
+        }
+        return [datas,direction]
+    }
+
+    function draw1(e){
+        var arr = getDateAndDirection(e);
+        var render = document.getElementById('render');
+        switch (arr[1]){
+            case 0:
+            case 1:
+                pushIn(render,arr[0],arr[1]);break;
+            case -1:
+                render.removeChild(render.firstChild);break;
+            case -2:
+                render.removeChild(render.lastChild);break;
+        }
+    }
+    function sreach(e){
+        var searchInput = document.getElementById('search');
+        var seachV = searchInput.value;
+        var wrap =document.getElementById('wrap')
+        var nodeList=  getNodeList()
+        //var nodeList = document.createNodeIterator(wrap,NodeFilter.SHOW_ELEMENT,null,false);
+        //console.log(nodeList);
+    i
+        for(var i=0;i<nodeList.length && seachV.trim() != '';i++){
+            var node =nodeList[i];
+            var j = node.innerText.indexOf(seachV)
+            if( j > -1){
+                var value = node.innerText ;
+                var reg = new RegExp(seachV,'g');
+                value = value.replace(reg,"<span style=\'background-color:rgba(0,0,0,1)\'>"+seachV+ "</span>");
+               node.innerHTML =value
+            }
+        }
+
+
+    }
+
+    function getNodeList(){
+        var elements = Array.prototype.slice.call(document.getElementById('wrap').childNodes,0);
+       var childList = elements.filter(function(item){
+           return item.nodeType != 3
+       });
+   return  getArr([],childList);
+
+
+    }
+    function getArr(newArr,arr){
+        arr.forEach(function(item){
+            if(item.childElementCount > 0 ){
+                var temp = Array.prototype.slice.call(item.childNodes,0).filter(function(item)
+                { return item.nodeType != 3});
+                newArr = newArr.concat(getArr([],temp))
+            }else{
+                newArr = newArr.concat(item);
+            }
+        })
+        return newArr;
+    }
+
+    window.onload = function(){
+      var btns = document.getElementsByTagName('button');
+        var len = btns.length;
+        for(var i = 0;i < len ;i++){
+            btns[i].addEventListener('click',function(e){
+                if(e.target.id == 'btnSearch'){
+                    sreach(e)
+                }else{
+                    draw1(e);
+                    document.getElementById('datas').value ='';
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>
