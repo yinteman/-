@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Javascript和树</title>
+</head>
+<body>
+   <div id="wrap">
+
+       </div>
+       <div>
+           <button id="front">前序遍历</button>
+           <button id="back">后序遍历</button>
+           <button id="inset">中序遍历</button>
+       </div>
+   </div>
+   <script>
+
+       window.onload = function(){
+           var wap= document.getElementById('wrap');
+           var width = 400;
+           var height =200;
+           var  j = 1;
+           for(var i = 1;i <= 15;i++){
+               var div = document.createElement('div');
+              div.style.display="block";
+              div.id = i;
+               var level = i < Math.pow(2,j)?j:++j;
+               div.style.width = (width /Math.pow(2,level -1)) - 20 +'px';
+               div.style.height =(height /Math.pow(2,level -1)) - 20+'px';
+               div.style.float='left';
+               div.style.marginTop='15px';
+               div.style.marginLeft='5px';
+               div.style.border="1px solid black";
+               if( i == 1){
+                   wap.appendChild(div);
+               }else{
+                   var pid =( i/2|0);
+                   var parent = document.getElementById(''+pid);
+                   parent.appendChild(div);
+               }
+           }
+                    var btns = document.getElementsByTagName("button");
+           var NodeList = document.createTreeWalker(wap, NodeFilter.SHOW_ELEMENT,null,false);
+           console.log(NodeList);
+                for(var i = 0;i<btns.length;i++){
+                    btns[i].addEventListener('click',function(e){
+                        return order(e,NodeList);
+                    })
+                };
+
+       };
+
+
+       function fontOrder(Node){
+          if( !(Node == null)){
+              Node.style.border="1px solid blue";
+                setTimeout(function(){fontOrder(Node.children[0]) },1000) ;
+                setTimeout(function(){fontOrder(Node.children[1]) },2000) ;
+          }
+       };
+       function backOrder(Node){
+           if( !(Node == null)){
+               backOrder(Node.children[0]) ;
+               setTimeout(function(){backOrder(Node.children[1]) },1000) ;
+               setTimeout(function(){ Node.style.border="1px solid blue"; },2000) ;
+
+           }
+       }
+       function insertorder(Node){
+           if( !(Node == null)){
+               insertorder(Node.children[0]) ;
+               setTimeout(function(){ Node.style.border="1px solid blue"; },1000) ;
+               setTimeout(function(){insertorder(Node.children[1]) },2000) ;
+
+           }
+       }
+
+       function order(e,NodeList){
+           var root = NodeList.root.children[0];
+           console.log(e)
+           switch(e.target.id){
+               case 'front':
+                   fontOrder(root);break;
+               case 'back' :
+                   backOrder(root);break;
+               case 'inset':
+                   insertorder(root);break;
+           }
+       }
+   </script>
+</body>
+
+</html>
