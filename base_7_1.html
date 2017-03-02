@@ -45,48 +45,67 @@
            console.log(NodeList);
                 for(var i = 0;i<btns.length;i++){
                     btns[i].addEventListener('click',function(e){
-                        return order(e,NodeList);
+                        var arr = order(e,NodeList);
+                        console.log(arr);
+                        var lastNode =null;
+                        for(var i=0; i< arr.length; i++){
+                            setTimeout(function(j){
+                                //避免闭包获取外部i，重新传入参数i，获得值的传递
+                                return function() {
+                                    if(lastNode){
+                                        lastNode.style.backgroundColor ="#fff"
+                                    }
+                                    arr[j].style.backgroundColor = "skyblue";
+                                    lastNode = arr[j];
+                                }
+                            }(i),i*500)//循环产生函数，每个函数执行时间增加500ms
+                        }
                     })
                 };
 
        };
 
 
-       function fontOrder(Node){
+       function fontOrder(Node,arr){
           if( !(Node == null)){
-              Node.style.border="1px solid blue";
-                setTimeout(function(){fontOrder(Node.children[0]) },1000) ;
-                setTimeout(function(){fontOrder(Node.children[1]) },2000) ;
+                arr.push(Node);
+                fontOrder(Node.children[0],arr);
+               fontOrder(Node.children[1],arr) ;
+              return arr;
           }
        };
-       function backOrder(Node){
+       function backOrder(Node,arr){
            if( !(Node == null)){
-               backOrder(Node.children[0]) ;
-               setTimeout(function(){backOrder(Node.children[1]) },1000) ;
-               setTimeout(function(){ Node.style.border="1px solid blue"; },2000) ;
+               backOrder(Node.children[0],arr) ;
+               backOrder(Node.children[1],arr);
+               arr.push(Node);
+              return  arr;
 
            }
        }
-       function insertorder(Node){
+       function insertorder(Node,arr){
            if( !(Node == null)){
-               insertorder(Node.children[0]) ;
-               setTimeout(function(){ Node.style.border="1px solid blue"; },1000) ;
-               setTimeout(function(){insertorder(Node.children[1]) },2000) ;
+               insertorder(Node.children[0],arr) ;
+               arr.push(Node);
+               insertorder(Node.children[1],arr) ;
+               return arr;
 
            }
        }
 
        function order(e,NodeList){
+           var arr=[];
            var root = NodeList.root.children[0];
            console.log(e)
            switch(e.target.id){
                case 'front':
-                   fontOrder(root);break;
+                 arr=   fontOrder(root,arr);break;
                case 'back' :
-                   backOrder(root);break;
+                 arr=   backOrder(root,arr);break;
                case 'inset':
-                   insertorder(root);break;
+                arr=   insertorder(root,arr);break;
            }
+           return arr;
        }
    </script>
 </body>
