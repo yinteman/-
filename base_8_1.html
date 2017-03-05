@@ -83,7 +83,80 @@
            arr[i].style.backgroundColor ="#fff"
        }
    }
+   //遍历树
+   function SearchTree(ele){
+       this.root = ele;
+       this.findKey = '';
+       this.findIndex =-1;
+       this.nodes =[];
+       this.nodeIndex = -1;
+       this.timeOut = -1;
 
+   }
+   SearchTree.prototype.startTravelNode = function(){
+       if( -1 != this.nodeIndex){
+           this.nodes[this.nodeIndex].style.backgroundColor='#fff';}
+          if(this.nodeIndex < this.nodes.length){
+              this.nodeIndex ++;
+              if(this.findIndex == this.nodeIndex){
+                  this.nodes[this.nodeIndex].style.backgroundColor ='red';
+
+              }else{
+                  this.nodes[this.nodeIndex].style.backgroundColor="yellow";
+                  var _that = this;
+                  this.timeOut = setTimeout(function(){
+                      _that.startTravelNode()
+                  },1000)
+
+              }
+          }else{
+              if(this.findKey && this.findIndex == -1){
+                  alert('没有找到')
+              }
+              this.stopTravelNode();
+          }
+
+   }
+   SearchTree.prototype.stopTravelNode = function(){
+       if(this.timeOut != -1) clearTimeout(this.timeOut);
+       this.timeOut = -1;
+       if( -1 != this.nodeIndex){
+           this.nodes[this.nodeIndex].style.backgroundColor= '#fff';
+       }
+       this.nodeIndex = -1;
+       this.nodes=[];
+   }
+   SearchTree.prototype.travelNode = function(node,key){
+       if( node){
+           this.nodes.push(node);
+           var childs = node.children;
+           var firstNode = node.childNodes[0];
+
+           if(key && ( firstNode.nodeType == 3 && key === node.firstChild.textContent ) ){
+               console.log(key)
+               this.findIndex = this.nodes.length -1;
+               return ;
+           }
+           for(var i= 0,len = childs.length ;i <len;i++){
+               this.travelNode(childs[i],key)
+           }
+       }
+   }
+   SearchTree.prototype.searchKey = function(key){
+       this.findIndex = -1;
+       this.findKey = key;
+       this.stopTravelNode();
+       this.travelNode(this.root ,key);
+       this.startTravelNode();
+       }
+
+   SearchTree.prototype.start = function(){
+       this.findKey='';
+       this.stopTravelNode();
+       this.travelNode(this.root);
+
+       this.startTravelNode()
+   }
       window.onload = function(){
           var collect = new UnionCollect(26);
           var dataArr =['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v,','w','x','y','z'];
@@ -93,7 +166,7 @@
           while(j--){
               collect.rankUnion(0,j);
           }
-          var divArr =[],j=0;
+          var j=0;
           while(j< collect.n){
               var id = collect.id[dataArr[j]];
               var paren = collect.parent[id];
@@ -109,36 +182,21 @@
               }else{
                   document.getElementById(''+paren).appendChild(div);
               }
-              divArr.push(div);
+
               j++
           }
+          //使用searchTree（参考了其他人的代码）；
+
+          var searchTree = new SearchTree(document.getElementById('content'));
           document.getElementById('btn1').addEventListener('click',function(e){
-              var lastNode =null;
-              for(var i=0; i< divArr.length; i++){
-                  setTimeout(function(j){
-                      //避免闭包获取外部i，重新传入参数i，获得值的传递
-                      return function() {
-                          if(lastNode){
-                              lastNode.style.backgroundColor ="#fff"
-                          }
-                          divArr[j].style.backgroundColor = "skyblue";
-                          lastNode = divArr[j];
-                      }
-                  }(i),i*500)//循环产生函数，每个函数执行时间增加500ms
-              }
+              console.log(searchTree.nodes)
+              searchTree.start();
+
           });
 
          document.getElementById('btn2').addEventListener('click',function(e){
-             clearColor(divArr);
              var value = document.getElementById('search').value;
-             var id = collect.id[value];
-             for( var i = 0 ; i < divArr.length;i ++){
-                 if( id == divArr[i].id){
-                     divArr[i].style.backgroundColor ='red';
-                 }else{
-                     divArr[i].style.backgroundColor ='#fff';
-                 }
-             }
+             searchTree.searchKey(value);
 
          })
       }
