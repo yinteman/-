@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript和树（二）</title>
+    <style>
+        #content{
+            display: block;
+            width: 100%;
+
+        }
+        #content:after{
+            content: '';
+            clear: both;
+            display: table;
+            height: 0;
+        }
+        #content div:after{
+            content: '';
+            clear: both;
+            display: table;
+            height: 0;
+         }
+        #content div{
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+  <div id="content">
+
+  </div>
+<div class="button-group">
+    <button id="btn1">遍历并查集</button>
+    <input type="text" id="search" value="">
+    <button id="btn2">查询</button>
+
+    <button id="3"></button>
+</div>
+
+  <script>
+   function  UnionCollect(n){
+       this.n =  n;
+       this.parent =[];
+       this.rank =[];
+       this.id=[];
+   }
+   UnionCollect.prototype.init = function(arr){
+       for(var i = 0; i < this.n; i++){
+           this.parent[i] = i% 4;
+           this.id[arr[i]] = i;
+           var rank = ( i / 4 | 0) > 1? 1:0;
+           this.rank.push(rank);
+       }
+   }
+      UnionCollect.prototype.findRoot = function(data){
+          var id = this.id[data];
+          while(id != this.parent[id]){
+              id = this.parent[i]
+          }
+          return id;
+      };
+   UnionCollect.prototype.find = function(p){
+       while(p != this.parent[p]){
+           p = this.parent[p]
+       }
+       return p;
+   };
+      UnionCollect.prototype.rankUnion = function(p,q){
+          var pR = this.find(p);
+          var qR = this.find(q);
+          if(this.rank[pR] < this.rank[qR]){
+             this. parent[pR] = qR;
+          }else if(this.rank[pR] >this.rank[qR]){
+             this.parent[qR] = pR;
+          }else{
+              this.parent[qR] = pR;
+              this.rank[pR] += 1
+          }
+      };
+   function clearColor(arr){
+       for(var i = 0; i < arr.length ;i++){
+           arr[i].style.backgroundColor ="#fff"
+       }
+   }
+
+      window.onload = function(){
+          var collect = new UnionCollect(26);
+          var dataArr =['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v,','w','x','y','z'];
+          console.log(dataArr.length);
+          collect.init(dataArr);
+          var j = collect.rank.length
+          while(j--){
+              collect.rankUnion(0,j);
+          }
+          var divArr =[],j=0;
+          while(j< collect.n){
+              var id = collect.id[dataArr[j]];
+              var paren = collect.parent[id];
+
+              var div = document.createElement('div');
+              div.id = id;
+              div.innerHTML = dataArr[j];
+              div.style.display ='block';
+              div.style.float='left';
+              div.style.border ='1px solid black';
+              if(paren == id){
+                  document.getElementById('content').appendChild(div)
+              }else{
+                  document.getElementById(''+paren).appendChild(div);
+              }
+              divArr.push(div);
+              j++
+          }
+          document.getElementById('btn1').addEventListener('click',function(e){
+              var lastNode =null;
+              for(var i=0; i< divArr.length; i++){
+                  setTimeout(function(j){
+                      //避免闭包获取外部i，重新传入参数i，获得值的传递
+                      return function() {
+                          if(lastNode){
+                              lastNode.style.backgroundColor ="#fff"
+                          }
+                          divArr[j].style.backgroundColor = "skyblue";
+                          lastNode = divArr[j];
+                      }
+                  }(i),i*500)//循环产生函数，每个函数执行时间增加500ms
+              }
+          });
+
+         document.getElementById('btn2').addEventListener('click',function(e){
+             clearColor(divArr);
+             var value = document.getElementById('search').value;
+             var id = collect.id[value];
+             for( var i = 0 ; i < divArr.length;i ++){
+                 if( id == divArr[i].id){
+                     divArr[i].style.backgroundColor ='red';
+                 }else{
+                     divArr[i].style.backgroundColor ='#fff';
+                 }
+             }
+
+         })
+      }
+  </script>
+</body>
+</html>
