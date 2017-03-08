@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript和树（二）</title>
+    <style>
+        #content{
+            display: block;
+            width: 100%;
+
+        }
+        #content:after{
+            content: '';
+            clear: both;
+            display: table;
+            height: 0;
+        }
+        #content div:after{
+            content: '';
+            clear: both;
+            display: table;
+            height: 0;
+        }
+        #content div{
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+
+</div>
+<div class="button-group">
+    <button id="btn1">遍历并查集</button>
+    <input type="text" id="search" value="">
+    <button id="btn2">查询</button>
+      <button id="btn3">删除按钮</button>
+      <button id="btn4">添加节点</button>
+</div>
+
+<script>
+    function  UnionCollect(n){
+        this.n =  n;
+        this.parent =[];
+        this.rank =[];
+        this.id=[];
+    }
+    UnionCollect.prototype.init = function(arr){
+        for(var i = 0; i < this.n; i++){
+            this.parent[i] = i% 4;
+            this.id[arr[i]] = i;
+            var rank = ( i / 4 | 0) > 1? 1:0;
+            this.rank.push(rank);
+        }
+    }
+    UnionCollect.prototype.findRoot = function(data){
+        var id = this.id[data];
+        while(id != this.parent[id]){
+            id = this.parent[i]
+        }
+        return id;
+    };
+    UnionCollect.prototype.find = function(p){
+        while(p != this.parent[p]){
+            p = this.parent[p]
+        }
+        return p;
+    };
+    UnionCollect.prototype.rankUnion = function(p,q){
+        var pR = this.find(p);
+        var qR = this.find(q);
+        if(this.rank[pR] < this.rank[qR]){
+            this. parent[pR] = qR;
+        }else if(this.rank[pR] >this.rank[qR]){
+            this.parent[qR] = pR;
+        }else{
+            this.parent[qR] = pR;
+            this.rank[pR] += 1
+        }
+    };
+    function clearColor(arr){
+        for(var i = 0; i < arr.length ;i++){
+            arr[i].style.backgroundColor ="#fff";
+            arr[i].style.border ='1px solid black';
+        }
+    }
+    //遍历树
+    function SearchTree(ele){
+        this.root = ele;
+        this.findKey = '';
+        this.findIndex =-1;
+        this.nodes =[];
+        this.nodeIndex = -1;
+        this.timeOut = -1;
+
+    }
+    SearchTree.prototype.startTravelNode = function(){
+        if( -1 != this.nodeIndex){
+            this.nodes[this.nodeIndex].style.backgroundColor='#fff';}
+        if(this.nodeIndex < this.nodes.length){
+            this.nodeIndex ++;
+            if(this.findIndex == this.nodeIndex){
+                this.nodes[this.nodeIndex].style.backgroundColor ='red';
+
+            }else{
+                this.nodes[this.nodeIndex].style.backgroundColor="yellow";
+                var _that = this;
+                this.timeOut = setTimeout(function(){
+                    _that.startTravelNode()
+                },1000)
+
+            }
+        }else{
+            if(this.findKey && this.findIndex == -1){
+                alert('没有找到')
+            }
+            this.stopTravelNode();
+        }
+
+    }
+    SearchTree.prototype.stopTravelNode = function(){
+        if(this.timeOut != -1) clearTimeout(this.timeOut);
+        this.timeOut = -1;
+        if( -1 != this.nodeIndex){
+            this.nodes[this.nodeIndex].style.backgroundColor= '#fff';
+        }
+        this.nodeIndex = -1;
+        this.nodes=[];
+    }
+    SearchTree.prototype.travelNode = function(node,key){
+        if( node){
+            this.nodes.push(node);
+            var childs = node.children;
+            var firstNode = node.childNodes[0];
+
+            if(key && ( firstNode.nodeType == 3 && key === node.firstChild.textContent ) ){
+                console.log(key)
+                this.findIndex = this.nodes.length -1;
+                return ;
+            }
+            for(var i= 0,len = childs.length ;i <len;i++){
+                this.travelNode(childs[i],key)
+            }
+        }
+    }
+    SearchTree.prototype.searchKey = function(key){
+        this.findIndex = -1;
+        this.findKey = key;
+        this.stopTravelNode();
+        this.travelNode(this.root ,key);
+        this.startTravelNode();
+    }
+
+    SearchTree.prototype.start = function(){
+        this.findKey='';
+        this.stopTravelNode();
+        this.travelNode(this.root);
+
+        this.startTravelNode()
+    }
+
+    //选中事件
+
+    window.onload = function(){
+        var collect = new UnionCollect(26);
+        var dataArr =['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v,','w','x','y','z'];
+        console.log(dataArr.length);
+        collect.init(dataArr);
+        var j = collect.rank.length
+        while(j--){
+            collect.rankUnion(0,j);
+        }
+        var j=0;
+        while(j< collect.n){
+            var id = collect.id[dataArr[j]];
+            var paren = collect.parent[id];
+
+            var div = document.createElement('div');
+            div.id = id;
+            div.innerHTML = dataArr[j];
+            div.style.display ='block';
+            div.style.float='left';
+            div.style.border ='1px solid black';
+            if(paren == id){
+                document.getElementById('content').appendChild(div)
+            }else{
+                document.getElementById(''+paren).appendChild(div);
+            }
+
+            j++
+        }
+        //使用searchTree（参考了其他人的代码）；
+
+        var searchTree = new SearchTree(document.getElementById('content'));
+        document.getElementById('btn1').addEventListener('click',function(e){
+            console.log(searchTree.nodes)
+            searchTree.start();
+
+        });
+
+        document.getElementById('btn2').addEventListener('click',function(e){
+            var value = document.getElementById('search').value;
+            searchTree.searchKey(value);
+
+        })
+
+        //  //补充点击变色功能
+        var selectDom,flag = 0;
+        var nodes = document.getElementById('content').getElementsByTagName('div');
+        var len = nodes.length;
+        for(var i = 0 ;i < len ;i++){
+            nodes[i].addEventListener('click',select)
+        }
+        function select(e){
+            // this.preventDefault();
+            if(flag === 0 ){
+                clearColor(nodes);
+                e.target.style.border="2px solid green";
+                selectDom = e.target;
+                flag = 1;
+            }
+        }
+        //点击按钮删除
+        document.getElementById('btn3').addEventListener('click',function(e){
+            if(selectDom){
+               var parent = selectDom.parentNode;
+                parent.removeChild(selectDom);
+
+                refresh();
+
+            }else{
+                alert('没有选中节点')
+            }
+
+        });
+        //点击按钮添加节点
+        document.getElementById('btn4').addEventListener('click',function(e){
+            console.log(selectDom.id)
+            if(selectDom){
+                var newNode = document.createElement('div');
+                newNode.id =selectDom.lastChild.id ? parseInt(selectDom.lastChild .id ) + 4 : parseInt(selectDom.id) *4 ;
+                newNode.innerText ='new'+ newNode.id;
+                newNode.style.display ='block';
+                newNode.style.float='left';
+                newNode.style.border ='1px solid black';
+                selectDom.appendChild(newNode);
+
+               refresh();
+            }else{
+                alert('没有选中节点')
+            }
+
+        });
+        function refresh(){
+            var  newNodes = document.getElementById('content').getElementsByTagName('div');
+           // console.log(newNodes);
+            clearColor(newNodes);
+            selectDom='';
+            flag = 0;
+        }
+    }
+</script>
+</body>
+</html>
