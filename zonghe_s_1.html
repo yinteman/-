@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>听指令的小方块(一）</title>
+</head>
+<style>
+    td{
+        border: 1px solid #666;
+
+    }
+</style>
+<body>
+   <div id="wrap">
+       <table style="border: 1px solid #000000; border-collapse: collapse; width: 600px;height: 600px " id="table">
+
+       </table>
+       <div>
+          <label for="direction">输入指令：<input type="text" id="direction"></label>
+           <button id="submit">执行</button>
+       </div>
+   </div>
+<script>
+     function createTale(){
+         for(var i = 0 ;i < 10 ;i ++){
+             var tr = document.createElement('tr');
+             tr.id = i;
+             document.getElementById('table').appendChild(tr);
+             for(var j = 0 ; j < 10 ;j++){
+                 var td = document.createElement('td');
+                 td.id = i+'_'+j;
+                 var blue = document.createElement('div');
+                 blue.style.width ="100%";
+                 blue.style.height = "40%";
+                 blue.style.backgroundColor ="blue";
+                 var red = document.createElement('div');
+                 red.style.width = "100%";
+                 red.style.height ="60%";
+                 red.style.backgroundColor ="red";
+                 td.appendChild(blue);
+                 td.appendChild(red);
+                 td.style.opacity = 0;
+                 document.getElementById(i).appendChild(td);
+             }
+         }
+     }
+     function createCell(id,deg){
+         console.log(id)
+         var mainCell = document.getElementById(id);
+         mainCell.style.opacity = 1;
+         mainCell.style.transform="rotate("+deg+'deg)';
+     }
+    function Direction(id,cmd){
+      var   cssText = document.getElementById(id).style.cssText;
+        var deg = /transform: rotate\((.*)deg\)/g.exec(cssText);
+        var rat =parseInt(deg[1]) ;
+        switch(cmd){
+            case 'GO':
+                 moveOne(id,rat);break;
+            case 'TUNLEF':
+                rat = rat - 90 ;
+                rat = rat <= -180 ? 360 + rat : rat;
+                rat = rat > 180 ? 180 - rat : rat;
+                    console.log(rat);
+                document.getElementById(id).style.transform="rotate("+rat+"deg)";
+                break;
+            case 'TUNRIG':
+                rat = rat + 90 ;
+                rat = rat <= -180 ? 360 + rat : rat;
+                rat = rat > 180 ? 180 - rat : rat;
+                document.getElementById(id).style.transform="rotate("+rat+"deg)";
+                break;
+            case 'TUNBAC':
+                rat = rat + 180 ;
+                rat = rat <= -180 ? 360 + rat : rat;
+                rat = rat > 180 ? 180 - rat : rat;
+                document.getElementById(id).style.transform="rotate("+rat+"deg)";
+              break;
+        }
+
+    }
+     function opcityTurn(id){
+         document.getElementById(id).style.opacity = 0 ;
+     }
+     function moveOne(id,deg){
+         console.log(deg);
+        // var nowId = document.getElementById(id);
+         var arrId = id.split('_');
+         var i= parseInt(arrId[0]),j = parseInt(arrId[1]);
+         switch(deg){
+             case 0:
+                 i-- ;break;
+             case 90:
+                 j++;break;
+             case -90:
+                 j--;break;
+             case 180:
+                 i++;break;
+         }
+         if(i >= 9 || i <= 0 || j <=0 || j >= 9){
+             alert('超出范围，不执行')
+         }else{
+             opcityTurn(id);
+             var newId = i+'_'+j;
+             createCell(newId,deg);
+            // return newId;
+         }
+
+     }
+
+    window.onload=function(){
+        createTale();
+        createCell('4_4',0);
+        //document.getElementById('4_4').style.transform = "rotate(90deg)";
+       // Direction('4_4',0);
+
+        document.getElementById('submit').addEventListener('click',function(e){
+            var vaule  = document.getElementById('direction').value;
+            var tds = document.getElementsByTagName('td'),id='';
+            for(var i = 0, len = tds.length;i < len ;i ++){
+                if( tds[i].style.opacity == 1 ){
+                    id= tds[i].id;
+                }
+            }
+            Direction(id,vaule);
+        });
+        //  console.log(document.getElementById('4_4').style.cssText)
+
+    }
+</script>
+</body>
+</html>
