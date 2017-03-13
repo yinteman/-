@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>听指令的小方块二</title>
+</head>
+<style>
+    td{
+        border: 1px solid #666;
+        -webkit-transition: all 1s;
+        -moz-transition: all 1s;
+        -ms-transition: all 1s;
+        -o-transition: all 1s;
+        transition: all 1s;
+    }
+
+</style>
+<body>
+<div id="wrap">
+    <table style="border: 1px solid #000000; border-collapse: collapse; width: 600px;height: 600px " id="table">
+
+    </table>
+    <div>
+        <label for="direction">输入指令：<input type="text" id="direction"></label>
+        <button id="submit">执行</button>
+    </div>
+</div>
+<script>
+    function createTale(){
+        for(var i = 0 ;i < 10 ;i ++){
+            var tr = document.createElement('tr');
+            tr.id = i;
+            document.getElementById('table').appendChild(tr);
+            for(var j = 0 ; j < 10 ;j++){
+                var td = document.createElement('td');
+                td.id = i+'_'+j;
+                var blue = document.createElement('div');
+                blue.style.width ="100%";
+                blue.style.height = "40%";
+                blue.style.backgroundColor ="blue";
+                var red = document.createElement('div');
+                red.style.width = "100%";
+                red.style.height ="60%";
+                red.style.backgroundColor ="red";
+                td.appendChild(blue);
+                td.appendChild(red);
+                td.className="actionShow";
+                td.style.opacity = 0;
+                document.getElementById(i).appendChild(td);
+            }
+        }
+    }
+
+    function Cell(id,deg){
+        var arrId = id.split('_');
+        this.i= parseInt(arrId[0]);
+        this.j = parseInt(arrId[1]);
+        this.deg = deg;
+        this.opacity = 0;
+        this.div = document.getElementById(id)
+        this.show = function(){
+            this.div .style.opacity = 1;
+            this.div .style.transform="rotate("+this.deg+'deg)';
+        }
+        this.hidden = function(){
+            this.div.style.opacity = 0;
+        }
+    }
+
+    function Deraction(id){
+        var   cssText = document.getElementById(id).style.cssText;
+        var deg = /transform: rotate\((.*)deg\)/g.exec(cssText);
+        var rat =deg ? parseInt(deg[1]):0 ;
+        this.cur = new Cell(id,rat);
+        this.cur.show();
+        this.x = this.cur.i;
+        this.y = this.cur.j;
+       this.deg = this.cur.deg
+    }
+    Deraction.prototype.move = function(cmd){
+        switch(cmd){
+            case 'TRA LEF':
+                this.y -- ;break;
+            case 'TRA TOP':
+                this.x --;break;
+            case 'TRA RIG':
+                this.y ++ ;break;
+            case 'TRA BOT':
+                this.x ++;break;}
+
+    }
+    Deraction.prototype.turn = function(cmd){
+        var rat = this.deg;
+        switch(cmd){
+            case 'MOV LEF':
+                rat = -90 ;
+                this.move('TRA LEF')  ;
+                break;
+            case 'MOV TOP':
+                rat = 0 ;
+                this.move('TRA TOP')  ;
+                break;
+            case 'MOV RIG':
+                rat= 90;
+                this.move('TRA RIG')  ;
+                break;
+            case 'MOV BOT':
+                rat = 180 ;
+                this.move('TRA BOT')  ;break;
+        }
+        this.deg = rat;
+    };
+    Deraction.prototype.execute = function(cmd){
+        if(this.x >= 9 || this.x <= 0 || this.y <=0 || this.y >= 9){
+            alert('超出范围，不执行')
+        }else{
+        this.cur.hidden();
+        if(cmd[0] == 'T'){
+            this.move(cmd)
+        }else{
+            this.turn(cmd)
+        }
+            var id = this.x+'_'+this.y;
+            this.cur = new Cell(id,this.deg);
+            this.cur.show();
+        }
+
+    }
+
+
+    window.onload=function(){
+        createTale();
+        var deraction = new Deraction('4_4');
+        //document.getElementById('4_4').style.transform = "rotate(90deg)";
+        // Direction('4_4',0);
+
+        document.getElementById('submit').addEventListener('click',function(e){
+            var vaule  = document.getElementById('direction').value;
+            var tds = document.getElementsByTagName('td'),id='';
+           /* for(var i = 0, len = tds.length;i < len ;i ++){
+                if( tds[i].style.opacity == 1 ){
+                    id= tds[i].id;
+                }
+            }*/
+            deraction.execute(vaule);
+        });
+        //  console.log(document.getElementById('4_4').style.cssText)
+
+    }
+</script>
+</body>
+</html>
