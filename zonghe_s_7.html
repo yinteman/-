@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UI组件之排序表格</title>
+    <style>
+        .table{
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            border:1px solid #cad9ea;
+        }
+        th{
+            border:1px solid #cad9ea;
+            font-weight: bold;
+            color: #000000;
+            font-size: 14px;
+        }
+        td{
+            border:1px solid #cad9ea;
+            padding:0 1em 0;
+            font-size: 11px;
+            color: #000000;
+
+        }
+
+
+    </style>
+</head>
+<body>
+   <div id="wrap">
+       <table  class="table" cellpadding="0" cellspacing="0">
+
+           <tr>
+               <th>姓名 </th>
+               <th>语文<span id="1">▲</span></th>
+               <th>数学<span id="2">▲</span></th>
+               <th>英语<span id="3">▲</span></th>
+               <th>总分<span id="4">▲</span></th>
+           </tr>
+           <tbody id="table">
+           </tbody>
+
+       </table>
+   </div>
+   <script>
+       var data =[
+           ['A',90,80,70,240],
+           ['B',70,60,90,220],
+           ['C',90,60,70,220],
+           ['D',80,60,100,240]
+
+       ]
+
+       function TD(data){
+           var tr = document.createElement('tr');
+           var sum = 0;
+           for(var i = 0; i < data.length ;i++){
+               var td = document.createElement('td');
+               if(typeof data[i] == 'number'){
+                   sum += data[i]
+               }
+               td.className = i ;
+               td.innerText = data[i];
+               tr.appendChild(td);
+           }
+
+          return  tr;
+       }
+
+       function init(div,data){
+           data.forEach(function(item){
+
+               var tr =  TD(item);
+               div.appendChild(tr);
+           })
+       };
+       function clear(div){
+           var childs = div.childNodes;
+           var len = childs.length;
+           for(var j= len -1  ;j >= 0 ;j--){
+               div.removeChild(childs[j])
+           }
+       }
+       window.onload = function(){
+           var table = document.getElementById('table');
+
+           init(table,data);
+
+           var spans = document.getElementsByTagName('span');
+           var len = spans.length;
+           for(var i =0 ;  i <len ;i++){
+               spans[i].addEventListener('click',function(e){
+                   var index = parseInt(e.target.id );
+                     data.sort(function(a,b){
+                       return a[index] - b[index]
+                   });
+                   clear(table);
+                   init(table,data);
+               })
+           }
+       }
+   </script>
+</body>
+
+</html>
