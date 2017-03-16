@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自定义网页右键菜单</title>
+    <style>
+        .area{
+            border: 1px solid #ccc;
+            background-color: #fff1dd;
+            text-align: center;
+        }
+        .area span{
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+   <div class="wrap">
+       <div class="area" id="edit">
+           <spn>点击右键出现自定义栏目</spn>
+       </div>
+       <ul id="menu" style="position: absolute;visibility: hidden;width:150px">
+           <li>Menu item 1</li>
+           <li>Menu item 2</li>
+           <li>Menu item 3</li>
+       </ul>
+   </div>
+   <script>
+       window.onload = function(){
+           var menu =  document.getElementById('menu');
+           var liItem=  document.getElementById('menu').getElementsByTagName('li');
+           var contentMune = document.getElementById('edit');
+           contentMune.addEventListener('contextmenu',function(e){
+               e = e || window.event;
+               e.preventDefault();
+               var menu = document.getElementById('menu');
+               //用于自适应的元素offset...
+               var width = menu.offsetWidth;
+               var height = menu.offsetHeight;
+               var x =  e.clientX;
+               var y= e.clientY;
+               //clientWidth可视区域的宽度。
+               menu.style.left = (x + width > document.documentElement.clientWidth ? x - width : x )+ 'px';
+               menu.style.top = (y + height > document.documentElement.clientHeight ? y - height : y )+ 'px';
+
+               menu.style.visibility ='visible';
+           });
+          /* menu.addEventListener('click',function(e)){
+               e.preventDefault();
+           }*/
+           var len =liItem.length;
+           for(var i =0 ;i < len;i++){
+               liItem[i].addEventListener('click',function(e){
+                   e.preventDefault();
+                   var value = e.target.innerText;
+                   alert(value);
+                                 })
+           }
+           document.addEventListener('click',function(e){
+               document.getElementById('menu').style.visibility ='hidden';
+           })
+       }
+   </script>
+</body>
+</html>
