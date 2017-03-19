@@ -43,6 +43,88 @@ p.conver = function(key,val){
     })
 };
 
+
+
+//实现$watch的api接口
+/**
+* ES6 有proxy拦截器
+* ES5 Object.defineProperty
+ * 改进：如果设置新的值是一个对象的话，新设置的对象的属性是否能继续响应getter和setter；
+ * 改进方法：使用订阅器，接收消息并且发送
+* **/
+ /**设置时间订阅器-发布器
+  * */
+ function Event(){
+     this.events=[]
+ }
+Event.prototype.on = function(target,cb){
+    if(!this.events[target]){
+        this.events[target]=[];
+    }
+     this.events[target].push(cb);
+
+}
+Event.prototype.off = function(target){
+    for(let key in this.events){
+        if(this.events.hasOwnProperty(key) && key == target){
+            delete this.events[target]
+        }
+    }
+}
+Event.prototype.emit = function(target , ...arg){
+    this.events[target] && (this.events[target].forEach(
+        function(item){
+        item(...arg);
+    }))
+}
+
+/**
+ * 在监听对象中加入监听器
+ * */
+    function Observer(data){
+    this.data = data;
+    this.makeObserver(data);
+    this.eventBus = new Event();
+    //this.getterAndSetter=getterAndSetter();
+}
+
+Observer.prototype.makeObserver = function(obj){
+    let child;
+    for(var key in obj){
+        if(obj.hasOwnProperty(key)){
+            child = obj[key];
+            if(typeof child == 'object'){
+                new Observer(child)
+            }
+
+        }
+        this.getterAndSetter(key,child)
+    }
+}
+Observer.prototype.getterAndSetter = function(target,val){
+    let _this= this;
+    Object.defineProperty(this.data ,target,{
+        enumerable:true,
+        configurable:true,
+        get: function () {
+            console.log('你访问了'+target);
+            return val;
+        },
+        set:function(newVal){
+            console.log('你设置了'+target)
+            console.log('新的'+target+'='+newVal);
+            _this.eventBus.emit(target,val,newVal);
+            val = newVal;
+            if(typeof newVal == 'object'){
+                new Observer(newVal)
+            }
+        }
+    })
+}
+
+Observer.prototype.$watch=function(target,cb){
+    this.eventBus.on(target,cb)
+}
 var data ={
     username:{
         first:'a',
@@ -54,5 +136,13 @@ var data ={
         building:'shjdjd'
     }
 };
-var test = new Observe(data);
-test.data.username.first;
+
+var test = new Observer(data);
+test.$watch('age',function(){
+    console.log('你设置了新的age');
+});
+test.$watch('age',function(oldVal,newVal){
+     console.log(`我的年龄变了，原来是: ${oldVal}岁，现在是：${newVal}岁了')
+});
+test.data.age= 15;
+//console.log(test.eventBus)
