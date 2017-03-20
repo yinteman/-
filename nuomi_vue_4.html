@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>静态的数据绑定</title>
+</head>
+<body>
+   <div id="app">
+       <p>姓名：{{user.name}}</p>
+       <p>年龄：{{user.age}}</p>
+       <p>地址：{{address.number.pic}}</p>
+   </div>
+<script>
+    function Vue(obj){
+        this.el = obj.el;
+        this.data = obj.data;
+        this.mainDiv= document.querySelector(this.el);
+        this.show(this.mainDiv);
+           }
+    Vue.prototype.show = function(div){
+        var childNode = div.children;
+        let len = childNode.length;
+        for(var i=0;i<len;i++){
+            let node = childNode[i];
+           // console.log(node)
+            if(node.children && node.children.length > 0){
+               this.show(node);
+                console.log(1)
+            }
+          this.changeWord(node);
+
+
+        }
+    }
+    Vue.prototype.changeWord = function(node){
+        var content = this.data;
+        var reg = /\{\{(.+?)\}\}/;
+        var value = node.innerText ;
+        if(value.match(reg)){
+            var val,tobj;
+            while(value.match(reg)){
+              var matchArr=  reg.exec(value);
+                var item = matchArr[1];
+                let keys = item.indexOf('.') > -1 ? item.split('.') : [item];
+                    tobj =  content[keys[0]];
+                while(keys.length > 0){
+                        if (tobj && typeof tobj == 'object'){
+                            keys.shift();
+                            val = tobj[keys[0]];
+                            tobj =  tobj[keys[0]];
+                        }else{
+                            break;
+                        }
+                    }
+                val = keys.length > 1 ? '':val;
+                console.log(val)
+                value =  value.replace(reg,val)
+            }
+
+        }
+
+        node.innerText = value;
+       return this;
+    }
+    window.onload = function(){
+        var app = new Vue({
+            el:'#app',
+            data:{
+                user:{
+                    name:'a',
+                    age:25
+                },
+                address:{
+                    number:{
+                        id:'1',
+                        pic:'2'
+                    }
+                }
+            }
+        })
+
+    }
+</script>
+</body>
+</html>
